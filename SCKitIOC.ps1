@@ -1,5 +1,5 @@
 # Test-SCKitIOC.ps1
-# Version 1.0  (2026-11-12)
+# Version 1.1  (2026-11-12)
 #
 # Read-only detection sweep for the SCKit / rogue ScreenConnect client campaign
 # (Huntress "SCKit Worm", Sophos, Blackpoint, Nov 2026). Built for ConnectWise
@@ -39,7 +39,7 @@
 # This script changes nothing on the host except its own log directory and
 # registry stamp. Remediation is a separate step.
 
-$SCInstanceIDRaw = '3af6dde13ca48caa'
+$SCInstanceIDRaw = '@SCInstanceID@'
 
 $ProgressPreference = 'SilentlyContinue'
 
@@ -60,7 +60,7 @@ $ErrorActionPreference = 'Stop'
 # ---------------------------------------------------------------------------
 # Config
 # ---------------------------------------------------------------------------
-$ScriptVersion = '1.0'
+$ScriptVersion = '1.1'
 $LogDir        = 'C:\sckitcheck'
 $LogKeep       = 10
 $RegPath       = 'HKLM:\SOFTWARE\SCKitCheck'
@@ -127,12 +127,12 @@ $BadDomains = @(
 # Strings that make a Defender exclusion or SRP/AppLocker rule SUSPICIOUS.
 # 'ScreenConnect' and '\Temp' are logged INFO only: ConnectWise's own AV guidance
 # excludes the client folder, and deny rules on \Temp are normal hardening.
-$PolicyKeywords = @('RelayTrap', 'sckit-', 'TrapWatch')
+$PolicyKeywords = @('RelayTrap', 'sckit-', 'TrapWatch')   # -like is case-insensitive; keep operator tooling away from a sckit- prefix
 $PolicyInfoKeywords = @('ScreenConnect', '\Temp')
 
 # Regex for SCKit artifacts in command lines, task actions and Run values.
 # 'sckit-' (with hyphen) so this script's own name and C:\sckitcheck never match.
-$ArtifactRegex = 'RelayTrap|sckit-|TrapWatch|Panel-Lateral|EadF\.php'
+$ArtifactRegex = 'RelayTrap|(?-i:sckit-)|TrapWatch|Panel-Lateral|EadF\.php'
 # Anything referencing this script or its log directory is excluded before matching
 $SelfRegex = 'Test-SCKitIOC|C:\\sckitcheck'
 
